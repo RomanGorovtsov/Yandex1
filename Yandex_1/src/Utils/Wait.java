@@ -12,11 +12,13 @@ public class Wait {
         wait.until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
+    public static void ForClickable(By locator) {
+        WebDriverWait wait = new WebDriverWait(DriverProvider.Driver(), 15);
+        wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
 
-    //public static void ForPresents(By locator, int index) {
-    //        WebDriverWait wait = new WebDriverWait(DriverProvider.Driver(), 15);
-    //
-    //        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
-    //        List<WebElement> elements = DriverProvider.Driver().findElements();
-    //        elements.get(1)
+    public static void ForEnabled(By locator) {
+        WebDriverWait wait = new WebDriverWait(DriverProvider.Driver(), 15);
+        wait.until(ExpectedConditions.elementToBeClickable((locator))).isEnabled();
+    }
 }

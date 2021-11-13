@@ -5,28 +5,23 @@ import driver.DriverProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
-import java.sql.SQLOutput;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class MarketPage {
     public static final By MARKET_SEARCH_FIELD_LOCATOR = By.xpath("//div//input[@id='header-search']");
-    //    public static final By FIRST_ELEMENTS_FIELD_LOCATOR = By.xpath("//article[@class='_2vCnw cia-vs cia-cs'][1]//div[@data-tid='b9e1d6c3']");
-//    public static final By SECOND_ELEMENTS_FIELD_LOCATOR = By.xpath("//article[@class='_2vCnw cia-vs cia-cs'][2]//div[@data-tid='b9e1d6c3']");
-    public static String ELEMENTS_FIELD_LOCATOR = "//article[@class='_2vCnw cia-vs cia-cs'][%s]//div[@data-tid='b9e1d6c3']";
-    public static String ELEMENTS_FIELD_LOCATOR_WITH_NO_NUMBER = "//article[@class='_2vCnw cia-vs cia-cs']//div[@data-tid='b9e1d6c3']";
-    public static String FIRST_DEVICE_FOR_COMPARE = "1";
-    public static String SECOND_DEVICE_FOR_COMPARE = "2";
     public static final By ACCOUNT_FIELD_LOCATOR = By.xpath("//div[@class='_3RDrv _1Vd4y']");
     public static final By COMPARE_BUTTON_LOCATOR = By.xpath("//a[@href='/compare?track=menu']");
     public static final By ACTION_CAMERAS_BUTTON_LOCATOR = By.xpath("//a[text()='Экшн-камеры']");
-    public static final By ACTION_CAMERAS_2_BUTTON_LOCATOR = By.xpath("//a[text()='Экшн-камеры']");
     public static final By SORT_CAMERAS_BY_PRICE_BUTTON = By.xpath("//div//button[@class='_23p69 _3D8AA']");
     public static final By PRICES_OF_CAMERAS = By.xpath("//div[@class='_3NaXx _33ZFz _2m5MZ c5gK7']//span/span");
     public static final By SECTION_PANEL = By.xpath("//div[@data-apiary-widget-name='@MarketNode/HeaderTabs']");
     public static final By LIST_VIEW_BUTTON = By.xpath("//label[@class='_1AaH5']//input[@value='list']");
+    public static final By LIST_IN_HOUSEHOLD_APPLIANCE = By.xpath("//div[@data-tid='cb168a42']");
+    public static final By WIDTH_TILL_LOCATOR = By.xpath("//input[@name='Ширина до']");
+    public static final By FRIDGE_SIZE_LOCATOR = By.xpath("//div//li[contains(text(), 'ШхВхГ')]");
 
     public MarketPage searchInMarketField(String Note8) {
         Wait.ForPresent(MARKET_SEARCH_FIELD_LOCATOR);
@@ -34,21 +29,25 @@ public class MarketPage {
         return new MarketPage();
     }
 
-    public void chooseDevice() {
+    public void selectListView() {
         if (!AreDevicesDisplayedAsList()) {
             DriverProvider.Driver().findElement(LIST_VIEW_BUTTON).click();
-        } else {
-            Wait.ForPresent(By.xpath(String.format(ELEMENTS_FIELD_LOCATOR, FIRST_DEVICE_FOR_COMPARE)));
-            Wait.ForPresent(By.xpath(String.format(ELEMENTS_FIELD_LOCATOR, SECOND_DEVICE_FOR_COMPARE)));
-            DriverProvider.Driver().findElement(By.xpath(String.format(ELEMENTS_FIELD_LOCATOR, FIRST_DEVICE_FOR_COMPARE))).click();
-            DriverProvider.Driver().findElement(By.xpath(String.format(ELEMENTS_FIELD_LOCATOR, SECOND_DEVICE_FOR_COMPARE))).click();
         }
     }
 
-    public Boolean AreDevicesAddedToCompareList(){
-        var addedToCompare = DriverProvider.Driver().findElement(LIST_VIEW_BUTTON).findElement(By.xpath("//article[@class='_2vCnw cia-vs cia-cs']//div[@data-tid='b9e1d6c3']")).getAttribute("class");
-        var result = addedToCompare.contains("_2Es7h RN9hX");
+    public void chooseDevice(int[] deviceNumber) {
+        if (!AreDevicesDisplayedAsList()) {
+            DriverProvider.Driver().findElement(LIST_VIEW_BUTTON).click();
+        }
 
+        for (var device : deviceNumber) {
+            if (!IsDeviceAddedToCompareList(device)) {
+                var deviceArea = GetDeviceArea(device);
+                Wait.ForPresent(By.xpath("//div[@data-tid='b9e1d6c3']"));
+                var compareButton = deviceArea.findElement(By.xpath(".//div[@data-tid='b9e1d6c3']"));
+                compareButton.click();
+            }
+        }
     }
 
     public Boolean AreDevicesDisplayedAsList() {
@@ -58,6 +57,20 @@ public class MarketPage {
         return result;
     }
 
+    public WebElement GetDeviceArea(int deviceNumber) {
+        var deviceLocator = By.xpath(String.format("//article[%s]", deviceNumber));
+        Wait.ForClickable(deviceLocator);
+        var deviceArea = DriverProvider.Driver().findElement(deviceLocator);
+        return deviceArea;
+    }
+
+    public Boolean IsDeviceAddedToCompareList(int deviceNumber) {
+        var deviceArea = GetDeviceArea(deviceNumber);
+        var comparisonButton = deviceArea.findElement(By.xpath(".//div[@data-tid='b9e1d6c3']/parent::div"));
+        var containedClasses = comparisonButton.getAttribute("class");
+
+        return containedClasses.contains("_2Es7h");
+    }
 
     public void clickOnAccountField() {
         Wait.ForPresent(ACCOUNT_FIELD_LOCATOR);
@@ -79,20 +92,29 @@ public class MarketPage {
         section.click();
     }
 
+    public void chooseAppliancesInHouseholdAppliances(String SectionName) {
+        Wait.ForPresent(LIST_IN_HOUSEHOLD_APPLIANCE);
+
+        var sectionElement = DriverProvider.Driver().findElement(LIST_IN_HOUSEHOLD_APPLIANCE);
+        var locatorPattern = (".//a[text()=%s]");
+        //a[text()='Холодильники']
+        var section = sectionElement.findElement(By.xpath(String.format(locatorPattern, SectionName)));
+        section.click();
+    }
+
+
     public void clickOnActionCamerasButton() {
         //TO DO: WAIT FOR SECTION TO APPEAR
         Wait.ForPresent(ACTION_CAMERAS_BUTTON_LOCATOR);
         DriverProvider.Driver().findElement(ACTION_CAMERAS_BUTTON_LOCATOR).click();
     }
 
-    public void clickOnActionCamerasButton2() {
-        Wait.ForPresent(ACTION_CAMERAS_2_BUTTON_LOCATOR);
-        DriverProvider.Driver().findElement(ACTION_CAMERAS_2_BUTTON_LOCATOR).click();
-    }
-
     public void clickOnTheSortByPriceButton() {
         Wait.ForPresent(SORT_CAMERAS_BY_PRICE_BUTTON);
-        DriverProvider.Driver().findElement(SORT_CAMERAS_BY_PRICE_BUTTON).click();
+        //DriverProvider.Driver().findElement(SORT_CAMERAS_BY_PRICE_BUTTON).click();
+        Actions actions = new Actions(DriverProvider.Driver());
+        WebElement sortCamerasByPrise = DriverProvider.Driver().findElement(SORT_CAMERAS_BY_PRICE_BUTTON);
+        actions.doubleClick(sortCamerasByPrise).perform();
     }
 
     public List<Integer> getAllDevicesPrices() {
@@ -105,4 +127,12 @@ public class MarketPage {
         }
         return ListOfDevices;
     }
+
+    public MarketPage selectTheWidthOfFridge() {
+        Wait.ForPresent(WIDTH_TILL_LOCATOR);
+        String widthOfFridge = "50";
+        DriverProvider.Driver().findElement(WIDTH_TILL_LOCATOR).sendKeys(widthOfFridge);
+        return new MarketPage();
+    }
+
 }

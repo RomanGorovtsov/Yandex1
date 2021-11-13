@@ -1,4 +1,5 @@
 package pages;
+
 import Utils.Wait;
 import driver.DriverProvider;
 import org.openqa.selenium.By;
@@ -52,46 +53,55 @@ public class StartPage {
         DriverProvider.Driver().findElement(VIDEO_LOCATOR).click();
         return new StartPage();
     }
+
     public StartPage clickImagineButton() {
         Wait.ForPresent(PICTURES_LOCATOR);
         DriverProvider.Driver().findElement(PICTURES_LOCATOR).click();
         return new StartPage();
     }
+
     public StartPage clickNewsButton() {
         Wait.ForPresent(NEWS_LOCATOR);
         DriverProvider.Driver().findElement(NEWS_LOCATOR).click();
         return new StartPage();
     }
+
     public StartPage clickMapsButton() {
         Wait.ForPresent(MAPS_LOCATOR);
         DriverProvider.Driver().findElement(MAPS_LOCATOR).click();
         return new StartPage();
     }
+
     public MarketPage clickMarketButton() {
         Wait.ForPresent(MARKET_LOCATOR);
         DriverProvider.Driver().findElement(MARKET_LOCATOR).click();
         return new MarketPage();
     }
+
     public StartPage clickTranslateButton() {
         Wait.ForPresent(TRANSLATE_LOCATOR);
         DriverProvider.Driver().findElement(TRANSLATE_LOCATOR).click();
         return new StartPage();
     }
-        public StartPage clickMusicButton() {
+
+    public StartPage clickMusicButton() {
         Wait.ForPresent(MUSIC_LOCATOR);
         DriverProvider.Driver().findElement(MUSIC_LOCATOR).click();
         return new StartPage();
     }
+
     public StartPage clickChooseLanguageButton() {
         Wait.ForPresent(LANGUAGE_LOCATOR);
         DriverProvider.Driver().findElement(LANGUAGE_LOCATOR).click();
         return new StartPage();
     }
+
     public StartPage clickBelarussianLanguageButton() {
         Wait.ForPresent(BEL_LANGUAGE_LOCATOR);
         DriverProvider.Driver().findElement(BEL_LANGUAGE_LOCATOR).click();
         return new StartPage();
     }
+
     public boolean isBelarussianLanguagePageLoaded() {
         return DriverProvider.Driver().findElement(BEL_LOGIN_LOCATOR).isDisplayed();
     }

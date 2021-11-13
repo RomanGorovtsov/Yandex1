@@ -32,4 +32,16 @@ public class ComparePage {
         Wait.ForPresent(IMAGINE_OF_CLEAR_COMPARE_LIST);
         return DriverProvider.Driver().findElement(IMAGINE_OF_CLEAR_COMPARE_LIST).isDisplayed();
     }
+
+    public boolean isButtonToClearListAppears() {
+        //если найден хотя бы один элемент, то вернет истну
+     return  DriverProvider.Driver().findElements(CLEAR_LIST_OF_COMPARE_BUTTON).size() > 0;
+    }
+
+    public void clickOnTheClearButtonInTheBeginning(){
+        if(isButtonToClearListAppears()){
+            DriverProvider.Driver().findElement(CLEAR_LIST_OF_COMPARE_BUTTON).click();
+            Wait.ForPresent(IMAGINE_OF_CLEAR_COMPARE_LIST);
+        }
+    }
 }
